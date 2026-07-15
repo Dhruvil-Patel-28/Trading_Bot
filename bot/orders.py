@@ -5,6 +5,7 @@ No knowledge of argparse or CLI concerns.
 """
 
 from bot.client import get_futures_client, place_futures_order, BinanceClientError
+from bot.mock_client import get_mock_futures_client, place_mock_futures_order
 from bot.validators import validate_order_params, ValidationError
 from bot.logging_config import get_logger
 
@@ -59,7 +60,7 @@ def format_order_response(response: dict) -> str:
     return "\n".join(lines)
 
 
-def execute_order(symbol: str, side: str, order_type: str, quantity, price=None) -> bool:
+def execute_order(symbol: str, side: str, order_type: str, quantity, price=None, dry_run: bool = False) -> bool:
     """
     Full order execution pipeline:
     1. Validate inputs
@@ -86,10 +87,15 @@ def execute_order(symbol: str, side: str, order_type: str, quantity, price=None)
                 params["quantity"],
                 f" price={params['price']}" if "price" in params else "")
 
-    # Step 3: Place order via API
+    # Step 3: Place order via API (or mock in dry-run mode)
     try:
-        client = get_futures_client()
-        response = place_futures_order(client, params)
+        if dry_run:
+            print("  ⚡ DRY-RUN MODE — no real API call")
+            client = get_mock_futures_client()
+            response = place_mock_futures_order(client, params)
+        else:
+            client = get_futures_client()
+            response = place_futures_order(client, params)
     except BinanceClientError as e:
         print(f"\n❌ Order Failed: {e}")
         return False

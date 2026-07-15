@@ -17,6 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
             "Examples:\n"
             "  Market Buy:   python cli.py --symbol BTCUSDT --side BUY --type MARKET --quantity 0.001\n"
             "  Limit Sell:   python cli.py --symbol ETHUSDT --side SELL --type LIMIT --quantity 0.01 --price 3500\n"
+            "  Dry Run:      python cli.py --symbol BTCUSDT --side BUY --type MARKET --quantity 0.001 --dry-run\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -50,6 +51,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Order price (required for LIMIT orders, ignored for MARKET)",
     )
 
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        help="Use mock client instead of real Binance API (no credentials needed)",
+    )
+
     return parser
 
 
@@ -61,12 +69,18 @@ def main():
     print("\n🤖 Binance Futures Testnet Trading Bot")
     print("─" * 40)
 
+    if args.dry_run:
+        print("  ⚡ Mode: DRY-RUN (mock client, no real API)")
+    else:
+        print("  🔗 Mode: LIVE (Binance Futures Testnet)")
+
     success = execute_order(
         symbol=args.symbol,
         side=args.side,
         order_type=args.order_type,
         quantity=args.quantity,
         price=args.price,
+        dry_run=args.dry_run,
     )
 
     sys.exit(0 if success else 1)
