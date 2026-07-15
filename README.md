@@ -31,23 +31,23 @@ Built as a clean, modular command-line tool that validates inputs locally, commu
                            │ calls execute_order()
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   Orchestration Layer                        │
+│                   Orchestration Layer                       │
 │  bot/orders.py — validates → calls API → formats output     │
 └─────────┬───────────────────────────────────┬───────────────┘
           │                                   │
           ▼                                   ▼
 ┌──────────────────────┐        ┌──────────────────────────┐
-│   Validation Layer   │        │       API Layer           │
-│  bot/validators.py   │        │  bot/client.py            │
-│  Pure input checks,  │        │  Binance API wrapper,     │
-│  no I/O or network   │        │  credentials, HTTP calls  │
+│   Validation Layer   │        │       API Layer          │
+│  bot/validators.py   │        │  bot/client.py           │
+│  Pure input checks,  │        │  Binance API wrapper,    │
+│  no I/O or network   │        │  credentials, HTTP calls │
 └──────────────────────┘        └──────────────────────────┘
                                            │
                                            ▼
                                 ┌──────────────────────┐
-                                │  Binance Futures      │
-                                │  Testnet API          │
-                                │  (USDT-M)             │
+                                │  Binance Futures     │
+                                │  Testnet API         │
+                                │  (USDT-M)            │
                                 └──────────────────────┘
 
 Cross-cutting: bot/logging_config.py → logs/trading_bot.log
